@@ -1,0 +1,2 @@
+# Core /engine uses Python standard library only (zero compiled wheels needed).
+# llama-server runs as an external local daemon on http://127.0.0.1:8081.

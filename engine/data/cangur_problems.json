@@ -1,0 +1,363 @@
+{
+  "problems": {
+    "CAM-2023-N4-17": {
+      "problem_id": "CAM-2023-N4-17",
+      "year": 2023,
+      "category": "Combinatorics",
+      "difficulty_level": 2,
+      "statement": "A 5x5 chessboard has 13 black squares and 12 white squares. You remove 1 white square. What is the maximum number of 1x2 dominoes that can cover the remaining 24 squares without overlapping?",
+      "options": {
+        "A": "9",
+        "B": "10",
+        "C": "12",
+        "D": "11",
+        "E": "13"
+      },
+      "correct_option": "D",
+      "default_move": "PARITY_CHECK",
+      "default_lcd_summary": "Try chessboard parity",
+      "intuition_hook": "Color alternating squares black and white so every 1x2 domino covers one of each.",
+      "socratic_seed": "Before dividing 24 by 2, how many black vs. white squares are left, and what colors must each domino cover?",
+      "option_misconceptions": {
+        "C": "ignored_parity_invariant",
+        "E": "overcounted_black_squares"
+      }
+    },
+    "CAM-2022-N3-08": {
+      "problem_id": "CAM-2022-N3-08",
+      "year": 2022,
+      "category": "Combinatorics",
+      "difficulty_level": 1,
+      "statement": "A dark drawer contains 5 red socks, 6 blue socks, and 7 green socks. How many socks must you pull out to be certain of having at least one matching pair?",
+      "options": {
+        "A": "2",
+        "B": "3",
+        "C": "4",
+        "D": "6",
+        "E": "8"
+      },
+      "correct_option": "C",
+      "default_move": "BOUNDARY_TEST",
+      "default_lcd_summary": "Test worst-case draws",
+      "intuition_hook": "Pigeonhole Principle: assume the unluckiest sequence before a forced match.",
+      "socratic_seed": "Imagine the unluckiest possible draws first—how many socks can you hold with no two sharing a color?",
+      "option_misconceptions": {
+        "A": "assumed_best_case_draw",
+        "B": "worst_case_off_by_one"
+      }
+    },
+    "CAM-2021-N4-12": {
+      "problem_id": "CAM-2021-N4-12",
+      "year": 2021,
+      "category": "Combinatorics",
+      "difficulty_level": 2,
+      "statement": "How many two-digit positive integers have the sum of their digits equal to 9?",
+      "options": {
+        "A": "8",
+        "B": "9",
+        "C": "10",
+        "D": "11",
+        "E": "12"
+      },
+      "correct_option": "B",
+      "default_move": "BOUNDARY_TEST",
+      "default_lcd_summary": "Check leading digit 0",
+      "intuition_hook": "Check boundary constraints like leading zeros when counting digits.",
+      "socratic_seed": "What values can the tens digit take in a two-digit number—does zero count as a two-digit integer?",
+      "option_misconceptions": {
+        "C": "included_leading_zero_09"
+      }
+    },
+    "CAM-2024-N3-05": {
+      "problem_id": "CAM-2024-N3-05",
+      "year": 2024,
+      "category": "Geometry",
+      "difficulty_level": 1,
+      "statement": "A rectangle has a perimeter of 30 cm, and its length is twice its width. What is its area in square centimeters?",
+      "options": {
+        "A": "36",
+        "B": "50",
+        "C": "75",
+        "D": "100",
+        "E": "200"
+      },
+      "correct_option": "B",
+      "default_move": "DECOMPOSE_PROBLEM",
+      "default_lcd_summary": "Use half-perimeter",
+      "intuition_hook": "Perimeter counts two widths and two lengths; half-perimeter gives width + length.",
+      "socratic_seed": "If the full perimeter is 30 cm, what is the sum of just one length and one width?",
+      "option_misconceptions": {
+        "E": "forgot_half_perimeter"
+      }
+    },
+    "CAM-2022-N4-19": {
+      "problem_id": "CAM-2022-N4-19",
+      "year": 2022,
+      "category": "Geometry",
+      "difficulty_level": 2,
+      "statement": "One interior angle of an isosceles triangle measures 100 degrees. What is the measure of each of the other two angles?",
+      "options": {
+        "A": "30",
+        "B": "40",
+        "C": "50",
+        "D": "80",
+        "E": "100"
+      },
+      "correct_option": "B",
+      "default_move": "COUNTEREXAMPLE_CHECK",
+      "default_lcd_summary": "Check 180-degree sum",
+      "intuition_hook": "Test whether an obtuse angle can appear twice in a triangle before solving.",
+      "socratic_seed": "Could two angles in the same triangle both measure 100 degrees, given the total angle sum?",
+      "option_misconceptions": {
+        "D": "forgot_to_halve_base_sum",
+        "E": "repeated_obtuse_angle"
+      }
+    },
+    "CAM-2020-N5-22": {
+      "problem_id": "CAM-2020-N5-22",
+      "year": 2020,
+      "category": "Geometry",
+      "difficulty_level": 3,
+      "statement": "Each interior angle of a regular polygon measures 150 degrees. How many sides does the polygon have?",
+      "options": {
+        "A": "8",
+        "B": "10",
+        "C": "12",
+        "D": "15",
+        "E": "18"
+      },
+      "correct_option": "C",
+      "default_move": "INVARIANT_NUDGE",
+      "default_lcd_summary": "Use exterior angle sum",
+      "intuition_hook": "The exterior angles of any convex polygon always sum to 360 degrees.",
+      "socratic_seed": "If each interior angle is 150 degrees, what is each exterior turning angle, and what do all exterior turns add up to?",
+      "option_misconceptions": {
+        "B": "interior_exterior_confusion"
+      }
+    },
+    "CAM-2023-N3-09": {
+      "problem_id": "CAM-2023-N3-09",
+      "year": 2023,
+      "category": "NumberTheory",
+      "difficulty_level": 1,
+      "statement": "The sum of three consecutive integers is 72. What is the largest of the three integers?",
+      "options": {
+        "A": "23",
+        "B": "24",
+        "C": "25",
+        "D": "26",
+        "E": "27"
+      },
+      "correct_option": "C",
+      "default_move": "DECOMPOSE_PROBLEM",
+      "default_lcd_summary": "Find the middle term",
+      "intuition_hook": "The average of evenly spaced numbers equals the middle number.",
+      "socratic_seed": "What does dividing 72 by 3 give you—is that the smallest, middle, or largest of the three integers?",
+      "option_misconceptions": {
+        "B": "returned_mean_not_largest"
+      }
+    },
+    "CAM-2021-N4-15": {
+      "problem_id": "CAM-2021-N4-15",
+      "year": 2021,
+      "category": "NumberTheory",
+      "difficulty_level": 2,
+      "statement": "What is the remainder when 2^10 is divided by 5?",
+      "options": {
+        "A": "0",
+        "B": "1",
+        "C": "2",
+        "D": "3",
+        "E": "4"
+      },
+      "correct_option": "E",
+      "default_move": "BOUNDARY_TEST",
+      "default_lcd_summary": "Check small power cycle",
+      "intuition_hook": "Look for repeating remainder cycles in small powers: 2^1, 2^2, 2^3, 2^4 mod 5.",
+      "socratic_seed": "Compute the remainders of 2^1, 2^2, 2^3, and 2^4 divided by 5—how often does the pattern repeat?",
+      "option_misconceptions": {
+        "C": "assumed_period_five"
+      }
+    },
+    "CAM-2019-N5-24": {
+      "problem_id": "CAM-2019-N5-24",
+      "year": 2019,
+      "category": "NumberTheory",
+      "difficulty_level": 3,
+      "statement": "A positive integer N leaves remainder 2 when divided by 3, and remainder 3 when divided by 4. What is the smallest possible value of N?",
+      "options": {
+        "A": "7",
+        "B": "11",
+        "C": "14",
+        "D": "15",
+        "E": "23"
+      },
+      "correct_option": "B",
+      "default_move": "INVARIANT_NUDGE",
+      "default_lcd_summary": "Test N + 1 divisibility",
+      "intuition_hook": "Notice that missing by 1 from 3 and from 4 means N + 1 is a common multiple of both.",
+      "socratic_seed": "Look at N + 1 instead of N: what remainder does N + 1 leave when divided by 3 and by 4?",
+      "option_misconceptions": {
+        "E": "missed_smallest_lcm"
+      }
+    },
+    "CAM-2023-N3-06": {
+      "problem_id": "CAM-2023-N3-06",
+      "year": 2023,
+      "category": "Algebra",
+      "difficulty_level": 1,
+      "statement": "A bat and a ball together cost 11 euros. The bat costs 10 euros more than the ball. How many euros does the ball cost?",
+      "options": {
+        "A": "0.50",
+        "B": "1.00",
+        "C": "1.50",
+        "D": "2.00",
+        "E": "5.00"
+      },
+      "correct_option": "A",
+      "default_move": "COUNTEREXAMPLE_CHECK",
+      "default_lcd_summary": "Check the difference!",
+      "intuition_hook": "Always plug your candidate back into the difference condition, not just the sum.",
+      "socratic_seed": "If the ball cost 1.00 euro and the bat is 10 euros more, what would the bat and total cost be?",
+      "option_misconceptions": {
+        "B": "subtracted_without_halving"
+      }
+    },
+    "CAM-2022-N4-14": {
+      "problem_id": "CAM-2022-N4-14",
+      "year": 2022,
+      "category": "Algebra",
+      "difficulty_level": 2,
+      "statement": "If x + y = 12 and x * y = 27, what is the value of x^2 + y^2?",
+      "options": {
+        "A": "63",
+        "B": "81",
+        "C": "90",
+        "D": "117",
+        "E": "144"
+      },
+      "correct_option": "C",
+      "default_move": "DECOMPOSE_PROBLEM",
+      "default_lcd_summary": "Expand (x + y)^2",
+      "intuition_hook": "(x + y)^2 includes a cross term 2xy that must be subtracted to isolate x^2 + y^2.",
+      "socratic_seed": "When you expand (x + y)^2, what extra term appears besides x^2 + y^2?",
+      "option_misconceptions": {
+        "E": "dropped_cross_term_2xy"
+      }
+    },
+    "CAM-2024-N4-11": {
+      "problem_id": "CAM-2024-N4-11",
+      "year": 2024,
+      "category": "Logic",
+      "difficulty_level": 2,
+      "statement": "Anna says 'Biel is lying.' Biel says 'Carla is lying.' Carla says 'Both Anna and Biel are lying.' Exactly one friend is telling the truth. Who is telling the truth?",
+      "options": {
+        "A": "Anna",
+        "B": "Biel",
+        "C": "Carla",
+        "D": "Anna and Carla",
+        "E": "Impossible"
+      },
+      "correct_option": "B",
+      "default_move": "COUNTEREXAMPLE_CHECK",
+      "default_lcd_summary": "Test one truth-teller",
+      "intuition_hook": "Assume each candidate is the sole truth-teller and check whether every statement stays consistent.",
+      "socratic_seed": "Suppose Anna is the only one telling the truth—what does that imply about Carla's statement?",
+      "option_misconceptions": {
+        "C": "skipped_contradiction_check"
+      }
+    }
+  },
+  "concept_guides": {
+    "calculus": {
+      "category": "Algebra",
+      "keywords": [
+        "derivative", "differentiate", "integral", "integrate", "antiderivative",
+        "limit", "tangent", "rate of change", "velocity", "acceleration",
+        "d/dx", "dy/dx", "calculus", "inflection", "chain rule", "product rule"
+      ],
+      "default_move": "DECOMPOSE_PROBLEM",
+      "default_lcd_summary": "Check rate & local change",
+      "intuition_hook": "Connect derivatives to local slope/rate of change and integrals to accumulated area over small intervals.",
+      "socratic_seed": "If you nudge the input by a tiny step, how does the output change—what local rate or accumulation rule applies here?"
+    },
+    "word_problems": {
+      "category": "Algebra",
+      "keywords": [
+        "cost", "euros", "price", "age", "speed", "distance", "train",
+        "together", "more than", "less than", "percent", "percentage", "ratio",
+        "apples", "bags", "hours", "minutes"
+      ],
+      "default_move": "DECOMPOSE_PROBLEM",
+      "default_lcd_summary": "Translate words to relation",
+      "intuition_hook": "Name the unknown quantity first and translate each sentence into one clear balance equation.",
+      "socratic_seed": "Which single unknown quantity would unlock the rest if you named it, and what condition links it to the given numbers?"
+    },
+    "algebra": {
+      "category": "Algebra",
+      "keywords": [
+        "equation", "algebra", "solve", "variable", "polynomial", "quadratic",
+        "linear", "factor", "coefficient", "expression", "identity", "="
+      ],
+      "default_move": "INVARIANT_NUDGE",
+      "default_lcd_summary": "Keep both sides balanced",
+      "intuition_hook": "Preserve equality across every step and test your algebraic simplification on a small concrete number.",
+      "socratic_seed": "What operation keeps both sides balanced while isolating the variable or factoring the expression?"
+    },
+    "parity": {
+      "category": "Combinatorics",
+      "keywords": [
+        "parity", "odd", "even", "chessboard", "domino", "grid", "color", "tile",
+        "handshake", "handshakes", "encaixada", "encaixades", "choose", "subset", "subsets",
+        "coin", "coins", "card", "cards", "dice", "knight", "liar", "walk", "tournament",
+        "probabilitat", "probability", "ways", "maneres"
+      ],
+      "default_move": "PARITY_CHECK",
+      "default_lcd_summary": "Try chessboard parity",
+      "intuition_hook": "Track an odd/even or black/white quantity that flips cleanly on every move.",
+      "socratic_seed": "If each step changes a square's color, what must hold after an even vs. odd number of steps?"
+    },
+    "pigeonhole": {
+      "category": "Combinatorics",
+      "keywords": ["pigeonhole", "sock", "drawer", "guarantee", "worst", "pair", "boxes"],
+      "default_move": "BOUNDARY_TEST",
+      "default_lcd_summary": "Test worst-case draws",
+      "intuition_hook": "Put as many items into separate buckets as possible before one bucket must overflow.",
+      "socratic_seed": "What is the maximum number of items you can pick while keeping every category separate?"
+    },
+    "geometry": {
+      "category": "Geometry",
+      "keywords": [
+        "triangle", "angle", "polygon", "perimeter", "area", "rectangle", "circle",
+        "decagon", "decàgon", "heptagon", "heptàgon", "octagon", "octàgon", "nonagon",
+        "dodecagon", "dodecàgon", "diagonal", "diagonals", "vertex", "vertices", "vèrtex",
+        "interior", "exterior", "regular", "convex", "radius", "diameter", "cube", "cub",
+        "cuboid", "volume", "volum", "side", "sides", "costat", "costats"
+      ],
+      "default_move": "DECOMPOSE_PROBLEM",
+      "default_lcd_summary": "Check angle/side invariants",
+      "intuition_hook": "Use constant totals like 180 triangle sum or 360 exterior turns before solving parts.",
+      "socratic_seed": "Which geometric total stays fixed regardless of the shape's size—perimeter, interior sum, or exterior turn?"
+    },
+    "number_theory": {
+      "category": "NumberTheory",
+      "keywords": [
+        "remainder", "mod", "modulo", "divisible", "prime", "lcm", "gcd", "factor", "power",
+        "residu", "parell", "senar", "divisor", "divisors", "factorial", "square", "quadrat perfecte",
+        "mcd", "mcm", "divisibilitat"
+      ],
+      "default_move": "BOUNDARY_TEST",
+      "default_lcd_summary": "Test small cases mod n",
+      "intuition_hook": "Compute the first few small cases to expose repeating remainder cycles or divisibility.",
+      "socratic_seed": "What remainders appear if you test the first three or four small integer cases?"
+    },
+    "algebra_logic": {
+      "category": "Logic",
+      "keywords": ["truth", "lie", "lying", "logic", "contradiction", "statement", "always", "never", "why"],
+      "default_move": "COUNTEREXAMPLE_CHECK",
+      "default_lcd_summary": "Test a counterexample",
+      "intuition_hook": "Plug a tiny concrete number or truth assignment back into every given condition.",
+      "socratic_seed": "If you test your rule on the smallest concrete example (like n=2 or one assumption), does every condition still hold?"
+    }
+  }
+}

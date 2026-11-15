@@ -1,0 +1,13 @@
+{
+  "insight_id": "ins-0001",
+  "created_at_utc": "2026-11-14T12:31:00Z",
+  "cycle_num": 1,
+  "insight_type": "BOTTLENECK",
+  "target_category": "Combinatorics",
+  "target_problem_id": "CAM-2023-N4-17",
+  "severity_score": 0.84,
+  "sql_executed": "SELECT problem_id, AVG(attempt_num) AS avg_attempts FROM telemetry_events GROUP BY problem_id HAVING AVG(attempt_num) >= 2.2;",
+  "evidence_summary": "78% of active sessions exceed 2 attempts on CAM-2023-N4-17 with dominant tag ignored_parity_invariant.",
+  "recommended_nudge": "Color adjacent squares black and white first—notice how every valid move changes color.",
+  "status": "ACTIVE"
+}

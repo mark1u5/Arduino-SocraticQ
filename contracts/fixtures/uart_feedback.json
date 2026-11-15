@@ -1,0 +1,9 @@
+{
+  "schema_v": 1,
+  "ack_seq": 42,
+  "led_state": "SOCRATIC_NUDGE",
+  "rgb": [255, 180, 0],
+  "buzz_pattern": "SHORT_DOUBLE",
+  "lcd_line1": "Check parity of",
+  "lcd_line2": "the corner tiles"
+}

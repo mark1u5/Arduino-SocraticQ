@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SocraticQ — Offline Edge Math Mentor</title>
+  <!-- 100% Offline-Ready: zero external CDN requests -->
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="sq-app">
+
+    <!-- Clean Top Bar + Latency & Offline HUD -->
+    <header class="sq-topbar">
+      <div class="sq-brand">
+        <div class="sq-brand-drop">SQ</div>
+        <span class="sq-brand-name">SocraticQ</span>
+      </div>
+
+      <!-- 3-Mode Segmented Pill: Teach Me | Guide & Solve | Explorer -->
+      <div class="sq-mode-pill" role="tablist" aria-label="Workspace Mode">
+        <button id="mode-teach" type="button" class="sq-mode-btn active" role="tab" aria-selected="true">
+          Teach Me
+        </button>
+        <button id="mode-solve" type="button" class="sq-mode-btn" role="tab" aria-selected="false">
+          Guide &amp; Solve
+        </button>
+        <button id="mode-explorer" type="button" class="sq-mode-btn" role="tab" aria-selected="false">
+          Explorer
+        </button>
+      </div>
+
+      <div class="sq-topbar-right">
+        <!-- Compact Latency & Offline HUD -->
+        <div class="sq-hud" aria-label="Edge Inference & Offline HUD">
+          <span id="hud-offline-badge" class="sq-hud-badge offline" title="100% Offline Edge Mode">
+            <span id="status-dot" class="sq-status-dot offline"></span>
+            <span id="status-label">OFFLINE</span>
+          </span>
+          <span id="hud-prompt-n" class="sq-hud-metric sq-mono" title="Prompt tokens evaluated">prompt_n 0</span>
+          <span id="hud-tok-s" class="sq-hud-metric sq-mono" title="Decode speed">0.0 tok/s</span>
+          <span id="hud-ram-free" class="sq-hud-metric sq-mono" title="Available RAM (free -m)">free — MB</span>
+        </div>
+
+        <button id="btn-cortex-toggle" type="button" class="sq-icon-btn" aria-expanded="false" aria-controls="cortex-drawer">
+          <span>Cortex</span>
+          <span id="cortex-alert-dot" class="sq-alert-dot"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Tutor Workspace (Teach Me & Guide & Solve) -->
+    <main id="tutor-view" class="sq-workspace">
+
+      <!-- Compact Problem Selector Bar -->
+      <section class="sq-problem-card" aria-label="Active Problem">
+        <div class="sq-problem-head">
+          <div class="sq-select-wrap">
+            <select id="problem-select" class="sq-select" aria-label="Select problem or Free Math">
+              <option value="FREE-MATH">Free Math — Ask anything</option>
+            </select>
+          </div>
+          <span id="active-problem-meta" class="sq-problem-meta">Free Math</span>
+        </div>
+        <div id="active-problem-stem" class="sq-problem-stem"></div>
+        <div id="active-options-row" class="sq-options-row"></div>
+      </section>
+
+      <!-- 4-Rung Hint Ladder -->
+      <section id="hint-ladder-card" class="sq-ladder-card" aria-label="4-Rung Hint Ladder">
+        <div class="sq-ladder-head">
+          <span class="sq-ladder-title">4-Rung Hint Ladder</span>
+          <span id="ladder-status-note" class="sq-problem-meta">Scaffolded offline hints · 0 answer leaks</span>
+        </div>
+
+        <div class="sq-ladder-rungs" role="tablist" aria-label="Hint Ladder Rungs">
+          <button id="rung-btn-1" type="button" class="sq-rung-btn active" data-rung="1">
+            <span class="sq-rung-num">R1</span>
+            <span>Easier Neighbour</span>
+          </button>
+          <button id="rung-btn-2" type="button" class="sq-rung-btn" data-rung="2">
+            <span class="sq-rung-num">R2</span>
+            <span>Topic &amp; Strategy</span>
+          </button>
+          <button id="rung-btn-3" type="button" class="sq-rung-btn" data-rung="3">
+            <span class="sq-rung-num">R3</span>
+            <span>Socratic Nudge</span>
+          </button>
+          <button id="rung-btn-4" type="button" class="sq-rung-btn gated" data-rung="4">
+            <span class="sq-rung-num">R4</span>
+            <span>Show Solution</span>
+          </button>
+        </div>
+
+        <div id="ladder-panel" class="sq-ladder-panel">
+          <div id="ladder-content" class="sq-ladder-content">
+            Select a problem above to load Rung 1 (easier neighbour) and Rung 2 (strategy).
+          </div>
+          <!-- Explicit Confirmation Gate for Rung 4 -->
+          <div id="rung4-confirm-box" class="sq-confirm-gate" hidden>
+            <div class="sq-confirm-text">
+              <strong>Confirm Rung 4:</strong> Reveal the full worked solution? (Try Rungs 1–3 first.)
+            </div>
+            <div class="sq-confirm-actions">
+              <button id="btn-rung4-confirm" type="button" class="sq-confirm-yes">Confirm Show Solution</button>
+              <button id="btn-rung4-cancel" type="button" class="sq-confirm-no">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Conversation Stream -->
+      <section id="dialogue-stream" class="sq-stream" aria-live="polite">
+        <div id="empty-state" class="sq-empty-state">
+          <div class="sq-empty-title">Calm, guided math reasoning</div>
+          <div class="sq-empty-sub">
+            Choose a Cangur problem above or switch to <strong>Free Math</strong>.
+            Step through the <strong>4-Rung Hint Ladder</strong>, or ask below for a Socratic nudge.
+          </div>
+        </div>
+      </section>
+
+      <!-- Bottom Composer -->
+      <footer class="sq-composer">
+        <div class="sq-composer-row">
+          <button id="mic-btn" type="button" class="sq-mic-btn" title="Tap to speak" aria-label="Record voice">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+              <line x1="12" x2="12" y1="19" y2="22"/>
+            </svg>
+          </button>
+
+          <textarea
+            id="math-input"
+            class="sq-input"
+            rows="1"
+            placeholder="Share your reasoning or ask a math question..."
+            aria-label="Math input"
+          ></textarea>
+
+          <button id="btn-submit-option" type="button" class="sq-submit-opt-btn">
+            Submit
+          </button>
+
+          <button id="btn-send" type="button" class="sq-send-btn">
+            Send
+          </button>
+        </div>
+
+        <div class="sq-composer-foot">
+          <div class="sq-conf-wrap">
+            <span>Confidence</span>
+            <input id="conf-slider" class="sq-slider" type="range" min="0" max="100" value="50" aria-label="Confidence percentage" />
+            <span id="conf-val" class="sq-mono">50%</span>
+          </div>
+
+          <label class="sq-tts-label">
+            <input id="tts-toggle" type="checkbox" />
+            <span>Speak reply</span>
+          </label>
+
+          <span id="voice-status-text" class="sq-voice-hint">Tap mic or type to begin</span>
+        </div>
+      </footer>
+
+    </main>
+
+    <!-- Explorer / Test Workbench View -->
+    <main id="explorer-view" class="sq-explorer" hidden>
+      <!-- Explorer Controls Toolbar -->
+      <section class="sq-exp-toolbar">
+        <div class="sq-exp-nav">
+          <select id="exp-problem-select" class="sq-select" aria-label="Explorer problem selector"></select>
+          <button id="exp-btn-next" type="button" class="sq-icon-btn" title="Shortcut: N">Next <kbd>N</kbd></button>
+          <button id="exp-btn-random" type="button" class="sq-icon-btn" title="Shortcut: R">Random <kbd>R</kbd></button>
+          <button id="exp-btn-ask" type="button" class="sq-send-btn sq-exp-ask-btn" title="Shortcut: M">Ask Model <kbd>M</kbd></button>
+        </div>
+
+        <div class="sq-exp-toggles">
+          <div class="sq-lang-pill" role="group" aria-label="Problem Language">
+            <button id="exp-lang-eng" type="button" class="sq-lang-btn active">ENG</button>
+            <button id="exp-lang-cat" type="button" class="sq-lang-btn">CAT</button>
+          </div>
+          <label class="sq-chk"><input id="exp-toggle-cal" type="checkbox" checked /> Calibration</label>
+          <label class="sq-chk"><input id="exp-toggle-prior" type="checkbox" checked /> Prior</label>
+          <label class="sq-chk"><input id="exp-toggle-r1" type="checkbox" checked /> R1</label>
+          <label class="sq-chk"><input id="exp-toggle-r2" type="checkbox" checked /> R2</label>
+          <label class="sq-chk"><input id="exp-toggle-r3" type="checkbox" checked /> R3</label>
+          <label class="sq-chk"><input id="exp-toggle-r4" type="checkbox" /> R4 (gated)</label>
+        </div>
+      </section>
+
+      <!-- Explorer Two-Column Grid -->
+      <div class="sq-exp-grid">
+        <!-- Left Column: Problem, Answer Keys A-E, Live 8x13 Matrix Simulator, Metrics -->
+        <section class="sq-exp-col">
+          <div class="sq-exp-card">
+            <div class="sq-exp-card-head">
+              <span id="exp-prob-badge" class="sq-msg-pill">—</span>
+              <span id="exp-bridge-badge" class="sq-problem-meta"></span>
+            </div>
+            <div id="exp-prob-stem" class="sq-problem-stem"></div>
+            <div id="exp-options-list" class="sq-exp-options"></div>
+            <div class="sq-exp-key-hint">
+              Shortcuts: <kbd>A</kbd>–<kbd>E</kbd> answer · <kbd>M</kbd> ask model · <kbd>N</kbd> next · <kbd>R</kbd> random
+            </div>
+          </div>
+
+          <!-- Live 8x13 LED Matrix Simulator -->
+          <div class="sq-exp-card">
+            <div class="sq-exp-card-head">
+              <span class="sq-section-label" style="margin:0;">Arduino Uno Q · 8×13 LED Matrix Simulator</span>
+              <span id="exp-led-label" class="sq-mono sq-problem-meta">IDLE</span>
+            </div>
+            <div id="led-matrix-grid" class="sq-led-matrix" aria-label="8 by 13 LED Matrix Simulator"></div>
+          </div>
+
+          <!-- Explorer Latency & Leak-Check Strip -->
+          <div class="sq-exp-card">
+            <div class="sq-exp-metrics">
+              <div><span class="sq-stat-label">Latency</span><div id="exp-m-latency" class="sq-mono sq-exp-mval">—</div></div>
+              <div><span class="sq-stat-label">prompt_n</span><div id="exp-m-promptn" class="sq-mono sq-exp-mval">0</div></div>
+              <div><span class="sq-stat-label">Speed</span><div id="exp-m-toks" class="sq-mono sq-exp-mval">0.0 tok/s</div></div>
+              <div><span class="sq-stat-label">Leak Check</span><div id="exp-m-leak" class="sq-mono sq-exp-mval sq-safe-text">SAFE (0 leaks)</div></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Right Column: Raw vs Calibrated A-E, Features, Prompt, Rungs 1-4 -->
+        <section class="sq-exp-col">
+          <div class="sq-exp-card">
+            <div class="sq-exp-card-head">
+              <span class="sq-section-label" style="margin:0;">A–E Scores: Raw vs. Calibrated + Prior</span>
+              <span id="exp-prior-key" class="sq-mono sq-problem-meta"></span>
+            </div>
+            <div id="exp-scores-bars" class="sq-score-bars"></div>
+            <div id="exp-features-wrap" class="sq-features-wrap"></div>
+          </div>
+
+          <div class="sq-exp-card">
+            <div class="sq-section-label">Hint Ladder Outputs (R1–R4)</div>
+            <div id="exp-rungs-out" class="sq-exp-rungs"></div>
+            <div id="exp-r4-gate" class="sq-confirm-gate" hidden>
+              <div class="sq-confirm-text">
+                <strong>Confirm Rung 4:</strong> Unlock full solution in Workbench?
+              </div>
+              <div class="sq-confirm-actions">
+                <button id="exp-btn-r4-confirm" type="button" class="sq-confirm-yes">Confirm Unlock R4</button>
+                <button id="exp-btn-r4-cancel" type="button" class="sq-confirm-no">Keep Locked</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="sq-exp-card">
+            <div class="sq-section-label">Exact Model Prompt</div>
+            <pre id="exp-prompt-pre" class="sq-prompt-pre"></pre>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Optional Slide-Over RawTree Cortex Drawer -->
+  <div id="cortex-backdrop" class="sq-drawer-backdrop"></div>
+  <aside id="cortex-drawer" class="sq-drawer" aria-hidden="true">
+    <div class="sq-drawer-head">
+      <div>
+        <div class="sq-drawer-title">RawTree Cortex</div>
+        <div id="sse-status-text" class="sq-problem-meta">Connecting stream…</div>
+      </div>
+      <button id="btn-cortex-close" type="button" class="sq-icon-btn">Close</button>
+    </div>
+
+    <div class="sq-drawer-body">
+      <div class="sq-stat-grid">
+        <div class="sq-stat-box">
+          <div class="sq-stat-label">Telemetry Events</div>
+          <div id="stat-telemetry" class="sq-stat-val sq-mono">0</div>
+        </div>
+        <div class="sq-stat-box">
+          <div class="sq-stat-label">Active Interventions</div>
+          <div id="stat-active" class="sq-stat-val sq-mono">0</div>
+        </div>
+        <div class="sq-stat-box">
+          <div class="sq-stat-label">Agent Insights</div>
+          <div id="stat-insights" class="sq-stat-val sq-mono">0</div>
+        </div>
+        <div class="sq-stat-box">
+          <div class="sq-stat-label">SQL Traces</div>
+          <div id="stat-traces" class="sq-stat-val sq-mono">0</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="sq-section-label">Active Interventions</div>
+        <div id="insights-list" style="display:flex;flex-direction:column;gap:8px;">
+          <div id="no-insights-msg" class="sq-problem-meta">No active bottlenecks detected yet.</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="sq-section-label">Recent Telemetry</div>
+        <table class="sq-table">
+          <thead>
+            <tr>
+              <th>Problem</th>
+              <th>Event</th>
+              <th>Conf</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="telemetry-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </aside>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

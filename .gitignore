@@ -1,0 +1,54 @@
+# Build and Release Folders
+bin-debug/
+bin-release/
+[Oo]bj/
+[Bb]in/
+
+# Other files and folders
+.settings/
+
+# Executables
+*.swf
+*.air
+*.ipa
+*.apk
+
+# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
+# should NOT be excluded as they contain compiler settings and other important
+# information for Eclipse / Flash Builder.
+
+# --- SocraticQ Project Ignores ---
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.db
+*.sqlite
+*.sqlite3
+engine/models/*.gguf
+engine/models/*.onnx
+engine/models/*.bin
+.streamlit/secrets.toml
+.DS_Store
+Thumbs.db
+
+# Large datasets & competition caches (M3Kang research license)
+M3Kang_raw/
+Datathon-FME-2026/
+datathon-UPC-maths-qualcomm-arduino-unoq-main/data/images/
+datathon-UPC-maths-qualcomm-arduino-unoq-main/data/*.jsonl
+datathon-UPC-maths-qualcomm-arduino-unoq-main/data/.*cache*
+!datathon-UPC-maths-qualcomm-arduino-unoq-main/data/sample_problems.jsonl
+!datathon-UPC-maths-qualcomm-arduino-unoq-main/data/README.md
+datathon-UPC-maths-qualcomm-arduino-unoq-main/results/*
+!datathon-UPC-maths-qualcomm-arduino-unoq-main/results/.gitkeep
+datathon-UPC-maths-qualcomm-arduino-unoq-main/.venv/
+
+# Temporary benchmark and scratch scripts
+test_*.py
+scratch_*.py
+bench_*.py
+inspect_*.py
+download_raw_dataset.py
+

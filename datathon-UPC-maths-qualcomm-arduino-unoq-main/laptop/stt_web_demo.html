@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-Time Math Speech-to-Text Demo (Datathon FME 2026)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 16px rgba(239, 68, 68, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .recording-active {
+      animation: pulse-ring 1.5s infinite;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col items-center p-4 md:p-8 font-sans">
+  <div class="max-w-3xl w-full bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-6 md:p-8 space-y-6">
+    
+    <!-- Header -->
+    <div class="border-b border-slate-700 pb-5 text-center space-y-2">
+      <div class="inline-flex items-center gap-2 bg-indigo-900/60 text-indigo-300 px-3 py-1 rounded-full text-xs font-semibold tracking-wide border border-indigo-700/50">
+        <span>⚡ QUALCOMM QRB2210 / ARDUINO UNO Q</span>
+      </div>
+      <h1 class="text-3xl font-extrabold text-white tracking-tight">🎙️ Real-Time Math Speech-to-Text</h1>
+      <p class="text-slate-400 text-sm">
+        Zero-install in-browser transcription via Web Speech API. Simulates the on-device voice frontend before routing into <span class="font-mono text-emerald-400">Qwen 0.8B (Port 8081)</span>.
+      </p>
+    </div>
+
+    <!-- Controls & Status Bar -->
+    <div class="flex flex-wrap items-center justify-between gap-4 bg-slate-900/80 p-4 rounded-xl border border-slate-700/80">
+      <div class="flex items-center gap-3">
+        <span id="status-indicator" class="w-3.5 h-3.5 rounded-full bg-slate-500 transition-colors duration-300"></span>
+        <span id="status-label" class="text-sm font-medium text-slate-300">Ready to listen</span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <label for="lang-select" class="text-xs text-slate-400 font-medium">Language:</label>
+        <select id="lang-select" class="bg-slate-800 text-slate-200 border border-slate-600 rounded-lg px-3 py-1.5 text-xs font-medium focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+          <option value="en-US" selected>English (en-US)</option>
+          <option value="ca-ES">Català (ca-ES)</option>
+          <option value="es-ES">Español (es-ES)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Big Push-to-Talk Button -->
+    <div class="flex flex-col items-center justify-center py-4 space-y-3">
+      <button id="toggle-record-btn" class="w-24 h-24 rounded-full bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white flex items-center justify-center shadow-lg transition-all duration-200 focus:outline-none">
+        <svg id="mic-icon" class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 02-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+        </svg>
+      </button>
+      <span class="text-xs text-slate-400">Click to start / stop speaking</span>
+    </div>
+
+    <!-- Live Audio Waveform Canvas -->
+    <div class="space-y-1">
+      <div class="flex justify-between text-xs text-slate-400">
+        <span>Microphone Activity (RMS)</span>
+        <span id="audio-rate">16,000 Hz target</span>
+      </div>
+      <canvas id="waveform-canvas" height="64" class="w-full bg-slate-950 rounded-xl border border-slate-800"></canvas>
+    </div>
+
+    <!-- Live Transcript Box -->
+    <div class="space-y-2">
+      <div class="flex justify-between items-center">
+        <label class="text-xs font-bold text-slate-300 uppercase tracking-wider">Live Transcription</label>
+        <button id="clear-btn" class="text-xs text-slate-400 hover:text-slate-200 underline">Clear</button>
+      </div>
+      <div id="transcript-container" class="min-h-[110px] max-h-[180px] overflow-y-auto p-4 bg-slate-950 border border-slate-700/80 rounded-xl font-mono text-sm leading-relaxed text-slate-100 whitespace-pre-wrap select-text">
+        <span class="text-slate-500 italic">Click the microphone button and ask a Kangaroo math question (e.g. "If a triangle has angles 45 and 45 degrees, what is the third angle?")...</span>
+      </div>
+    </div>
+
+    <!-- Edge LLM Dispatch Payload (Simulation) -->
+    <div class="space-y-2">
+      <div class="flex justify-between items-center">
+        <label class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Edge Inference Payload (Arduino Port 8081)</label>
+        <button id="simulate-send-btn" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold rounded text-white shadow transition-colors">
+          Simulate Qwen Post
+        </button>
+      </div>
+      <pre id="json-preview" class="p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-emerald-300 font-mono overflow-x-auto whitespace-pre-wrap">// Waiting for speech input to format JSON payload...</pre>
+    </div>
+
+    <!-- Information Footnote -->
+    <div class="pt-4 border-t border-slate-700 text-xs text-slate-400 space-y-1">
+      <p>💡 <span class="font-semibold text-slate-300">Why this works without crashes:</span> Uses browser-native Web Speech API on the client side, bypassing Python Windows sounddevice/WASAPI driver incompatibilities.</p>
+      <p>🚀 <span class="font-semibold text-slate-300">Deployment on Arduino Uno Q:</span> Runs the compiled native C++ <code class="text-indigo-300">whisper.cpp</code> (<code class="text-indigo-300">tiny.en q5_1</code>, 31 MB, ~50 MB RAM) directly on the ARM Cortex-A53 Linux core.</p>
+    </div>
+
+  </div>
+
+  <script>
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    let isRecording = false;
+    let finalTranscript = '';
+    let interimTranscript = '';
+
+    // Audio Visualizer setup
+    let audioCtx = null;
+    let analyser = null;
+    let micStream = null;
+    let animId = null;
+
+    const toggleBtn = document.getElementById('toggle-record-btn');
+    const statusIndicator = document.getElementById('status-indicator');
+    const statusLabel = document.getElementById('status-label');
+    const langSelect = document.getElementById('lang-select');
+    const transcriptContainer = document.getElementById('transcript-container');
+    const jsonPreview = document.getElementById('json-preview');
+    const clearBtn = document.getElementById('clear-btn');
+    const simulateSendBtn = document.getElementById('simulate-send-btn');
+    const canvas = document.getElementById('waveform-canvas');
+    const canvasCtx = canvas.getContext('2d');
+
+    // Check support
+    if (!SpeechRecognition) {
+      statusLabel.textContent = "Web Speech API not supported in this browser. Please use Google Chrome or Microsoft Edge.";
+      statusIndicator.className = "w-3.5 h-3.5 rounded-full bg-rose-500";
+      toggleBtn.disabled = true;
+      toggleBtn.classList.add('opacity-40', 'cursor-not-allowed');
+    }
+
+    function initRecognition() {
+      if (!SpeechRecognition) return;
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = langSelect.value;
+
+      recognition.onstart = () => {
+        isRecording = true;
+        statusIndicator.className = "w-3.5 h-3.5 rounded-full bg-emerald-400";
+        statusLabel.textContent = `Listening (${langSelect.value})... Speak now`;
+        toggleBtn.classList.remove('bg-indigo-600', 'hover:bg-indigo-500');
+        toggleBtn.classList.add('bg-rose-600', 'hover:bg-rose-500', 'recording-active');
+        startAudioViz();
+      };
+
+      recognition.onresult = (event) => {
+        interimTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          const trans = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            finalTranscript += trans + ' ';
+          } else {
+            interimTranscript += trans;
+          }
+        }
+        renderTranscript();
+        updateJsonPreview();
+      };
+
+      recognition.onerror = (event) => {
+        console.warn('Speech recognition error:', event.error);
+        if (event.error === 'not-allowed') {
+          statusLabel.textContent = "Microphone access denied. Please allow microphone permissions.";
+          statusIndicator.className = "w-3.5 h-3.5 rounded-full bg-rose-500";
+          stopRecording();
+        }
+      };
+
+      recognition.onend = () => {
+        if (isRecording) {
+          try { recognition.start(); } catch (e) { stopRecording(); }
+        } else {
+          statusIndicator.className = "w-3.5 h-3.5 rounded-full bg-slate-500";
+          statusLabel.textContent = "Stopped. Click to speak again.";
+          toggleBtn.classList.remove('bg-rose-600', 'hover:bg-rose-500', 'recording-active');
+          toggleBtn.classList.add('bg-indigo-600', 'hover:bg-indigo-500');
+          stopAudioViz();
+        }
+      };
+    }
+
+    function renderTranscript() {
+      const full = finalTranscript + (interimTranscript ? `<span class="text-indigo-400 italic">${interimTranscript}</span>` : '');
+      if (full.trim()) {
+        transcriptContainer.innerHTML = full;
+        transcriptContainer.scrollTop = transcriptContainer.scrollHeight;
+      } else {
+        transcriptContainer.innerHTML = '<span class="text-slate-500 italic">Listening...</span>';
+      }
+    }
+
+    function updateJsonPreview() {
+      const text = (finalTranscript + interimTranscript).trim();
+      if (!text) {
+        jsonPreview.textContent = "// Waiting for speech input to format JSON payload...";
+        return;
+      }
+      const payload = {
+        model: "qwen3.5-0.8b",
+        messages: [
+          { role: "system", content: "You are an on-device mathematical tutor for Cangur competitions." },
+          { role: "user", content: text }
+        ],
+        temperature: 0,
+        max_tokens: 120
+      };
+      jsonPreview.textContent = `POST http://127.0.0.1:8081/v1/chat/completions\nContent-Type: application/json\n\n${JSON.stringify(payload, null, 2)}`;
+    }
+
+    function startRecording() {
+      finalTranscript = '';
+      interimTranscript = '';
+      initRecognition();
+      try {
+        recognition.start();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function stopRecording() {
+      isRecording = false;
+      if (recognition) {
+        try { recognition.stop(); } catch (err) {}
+      }
+      stopAudioViz();
+      updateJsonPreview();
+    }
+
+    toggleBtn.addEventListener('click', () => {
+      if (isRecording) {
+        stopRecording();
+      } else {
+        startRecording();
+      }
+    });
+
+    langSelect.addEventListener('change', () => {
+      if (isRecording) {
+        stopRecording();
+        setTimeout(startRecording, 300);
+      }
+    });
+
+    clearBtn.addEventListener('click', () => {
+      finalTranscript = '';
+      interimTranscript = '';
+      transcriptContainer.innerHTML = '<span class="text-slate-500 italic">Cleared. Click microphone to speak...</span>';
+      updateJsonPreview();
+    });
+
+    simulateSendBtn.addEventListener('click', () => {
+      const text = (finalTranscript + interimTranscript).trim();
+      if (!text) {
+        alert("Please speak or transcribe a question first!");
+        return;
+      }
+      alert(`[Simulation] Dispatched prompt to Qwen 0.8B on port 8081:\n"${text}"`);
+    });
+
+    // Waveform visualization
+    function startAudioViz() {
+      navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+        micStream = stream;
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 256;
+        const source = audioCtx.createMediaStreamSource(stream);
+        source.connect(analyser);
+        drawWaveform();
+      }).catch((e) => {
+        console.warn("Audio viz stream error:", e);
+      });
+    }
+
+    function stopAudioViz() {
+      if (animId) cancelAnimationFrame(animId);
+      if (micStream) micStream.getTracks().forEach(t => t.stop());
+      if (audioCtx) audioCtx.close();
+      analyser = null;
+      micStream = null;
+      audioCtx = null;
+      drawIdleWave();
+    }
+
+    function drawWaveform() {
+      if (!analyser) return;
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+      analyser.getByteTimeDomainData(dataArray);
+
+      canvas.width = canvas.clientWidth * window.devicePixelRatio;
+      canvas.height = canvas.clientHeight * window.devicePixelRatio;
+
+      canvasCtx.fillStyle = '#020617';
+      canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+      canvasCtx.lineWidth = 2 * window.devicePixelRatio;
+      canvasCtx.strokeStyle = '#10b981';
+      canvasCtx.beginPath();
+
+      const sliceWidth = canvas.width * 1.0 / bufferLength;
+      let x = 0;
+
+      for (let i = 0; i < bufferLength; i++) {
+        const v = dataArray[i] / 128.0;
+        const y = v * (canvas.height / 2);
+        if (i === 0) canvasCtx.moveTo(x, y);
+        else canvasCtx.lineTo(x, y);
+        x += sliceWidth;
+      }
+
+      canvasCtx.lineTo(canvas.width, canvas.height / 2);
+      canvasCtx.stroke();
+
+      animId = requestAnimationFrame(drawWaveform);
+    }
+
+    function drawIdleWave() {
+      canvas.width = canvas.clientWidth * window.devicePixelRatio;
+      canvas.height = canvas.clientHeight * window.devicePixelRatio;
+      canvasCtx.fillStyle = '#020617';
+      canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+      canvasCtx.lineWidth = 1 * window.devicePixelRatio;
+      canvasCtx.strokeStyle = '#334155';
+      canvasCtx.beginPath();
+      canvasCtx.moveTo(0, canvas.height / 2);
+      canvasCtx.lineTo(canvas.width, canvas.height / 2);
+      canvasCtx.stroke();
+    }
+
+    drawIdleWave();
+    window.addEventListener('resize', drawIdleWave);
+  </script>
+</body>
+</html>

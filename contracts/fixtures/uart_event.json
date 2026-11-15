@@ -1,0 +1,12 @@
+{
+  "schema_v": 1,
+  "device_id": "unoq-01",
+  "seq": 42,
+  "ts_ms": 184290,
+  "event_type": "HINT_REQUEST",
+  "problem_id": "CAM-2023-N4-17",
+  "dial_category_idx": 2,
+  "confidence_dial": 35,
+  "selected_option": "C",
+  "attempt_num": 2
+}

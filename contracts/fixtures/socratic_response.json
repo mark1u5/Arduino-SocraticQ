@@ -1,0 +1,13 @@
+{
+  "problem_id": "CAM-2023-N4-17",
+  "category": "Combinatorics",
+  "difficulty_level": 2,
+  "hint_text": "You picked C with 35% confidence. Before counting every path, what happens if you color the grid like a chessboard—can two adjacent steps land on the same color?",
+  "lcd_summary": "Try chessboard parity",
+  "pedagogical_move": "PARITY_CHECK",
+  "is_correct": false,
+  "misconception_tag": "ignored_parity_invariant",
+  "latency_ms": 640,
+  "model_id": "qwen2.5-math-1.5b-q4_k_m",
+  "offline_mode": true
+}

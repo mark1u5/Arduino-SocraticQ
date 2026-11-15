@@ -1,0 +1,19 @@
+{
+  "event_id": "evt-0001",
+  "session_id": "sess-unoq-01",
+  "device_id": "unoq-01",
+  "ts_utc": "2026-11-14T12:30:00Z",
+  "problem_id": "CAM-2023-N4-17",
+  "cangur_year": 2023,
+  "category": "Combinatorics",
+  "difficulty_level": 2,
+  "event_type": "ANSWER_SUBMIT",
+  "attempt_num": 2,
+  "confidence_pct": 35,
+  "is_correct": false,
+  "misconception_tag": "ignored_parity_invariant",
+  "pedagogical_move": "PARITY_CHECK",
+  "solve_elapsed_ms": 48200,
+  "slm_latency_ms": 640,
+  "offline_cached": true
+}

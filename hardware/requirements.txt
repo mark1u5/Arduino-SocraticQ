@@ -1,0 +1,4 @@
+# Required only when serial_daemon.py talks to a physical serial port.
+pyserial>=3.5
+# Required for SSH channel synchronization (/shared/datathon/*.md)
+paramiko>=3.0.0
